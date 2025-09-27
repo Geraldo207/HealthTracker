@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Dashboard - Advanced Analytics</title>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Dark Mode Colors (Default) */
+            --primary-color: #60a5fa;
+            --primary-dark: #3b82f6;
+            --secondary-color: #94a3b8;
+            --success-color: #34d399;
+            --warning-color: #fbbf24;
+            --danger-color: #f87171;
+            --light-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --gradient-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            --sidebar-bg: #1e293b;
+            --header-bg: #1e293b;
+            --toggle-bg: #475569;
+            --toggle-knob: #f1f5f9;
+            --normal-bp-color: #34d399;
+            --elevated-bp-color: #fbbf24;
+            --high-bp-color: #f87171;
+            --crisis-bp-color: #dc2626;
+        }
+
+        /* Light Mode Colors */
+        [data-theme="light"] {
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --toggle-bg: #e2e8f0;
+            --toggle-knob: #ffffff;
+            --normal-bp-color: #10b981;
+            --elevated-bp-color: #f59e0b;
+            --high-bp-color: #ef4444;
+            --crisis-bp-color: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        
+        .logo-icon {
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--toggle-bg);
+            border-radius: 2rem;
+            padding: 0.25rem;
+            position: relative;
+            cursor: pointer;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--toggle-knob);
+            left: 3px;
+            transition: transform 0.3s ease;
+        }
+        
+        [data-theme="light"] .theme-toggle::before {
+            transform: translateX(30px);
+        }
+        
+        .theme-icon {
+            font-size: 0.9rem;
+            z-index: 1;
+            margin: 0 5px;
+        }
+        
+        .sun-icon {
+            color: #f59e0b;
+        }
+        
+        .moon-icon {
+            color: #cbd5e1;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        /* Sidebar - Now horizontal on mobile */
+        .sidebar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            order: 2;
+        }
+        
+        .sidebar-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            height: auto;
+        }
+        
+        .sidebar-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .date-range-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .custom-date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .custom-date-inputs input {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .preset-btn {
+            padding: 0.5rem;
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        .preset-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .health-status {
+            background: var(--light-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .status-indicator {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .status-good {
+            background: var(--success-color);
+        }
+        
+        .status-warning {
+            background: var(--warning-color);
+        }
+        
+        .status-danger {
+            background: var(--danger-color);
+        }
+        
+        .goal-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .goal-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            min-width: 100px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--light-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        .goal-percent {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            order: 1;
+        }
+        
+        /* Hero Header */
+        .hero-header {
+            background: var(--gradient-bg);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            opacity: 0.1;
+        }
+        
+        .hero-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-header p {
+            font-size: 1rem;
+            opacity: 0.95;
+            max-width: 100%;
+            margin: 0 auto 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .refresh-time {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            z-index: 1;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-bg);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .stat-info {
+            flex: 1;
+        }
+        
+        .stat-info h3 {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .trend-up { color: var(--danger-color); }
+        .trend-down { color: var(--success-color); }
+        .trend-stable { color: var(--text-secondary); }
+        
+        .stat-category {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .normal { background: #dcfce7; color: var(--success-color); }
+        .elevated { background: #fef3c7; color: var(--warning-color); }
+        .high { background: #fee2e2; color: var(--danger-color); }
+        .crisis { background: #fecaca; color: #dc2626; }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-left: 1rem;
+            opacity: 0.8;
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Enhanced Table */
+        .readings-table {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .table-header h2 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .table-header h2 i {
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Morning/Evening Toggle */
+        .time-toggle {
+            display: flex;
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .time-toggle-btn {
+            padding: 0.5rem 1rem;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .time-toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .filter-btn {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 0.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        
+        th {
+            background: var(--light-bg);
+            color: var(--text-primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.7rem;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background: var(--light-bg);
+        }
+        
+        .bp-reading {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        /* Colored BP readings based on category and theme */
+        .bp-normal { color: var(--normal-bp-color); }
+        .bp-elevated { color: var(--elevated-bp-color); }
+        .bp-high { color: var(--high-bp-color); }
+        .bp-crisis { color: var(--crisis-bp-color); }
+        
+        .recorded-by {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .time-cell {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .time-of-day {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .morning-time {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary-color);
+        }
+
+        .evening-time {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        /* Morning/Evening Comparison View */
+        .comparison-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .comparison-section {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-section h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-stats {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .comparison-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .comparison-stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+        
+        .chart-card h2 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .chart-card h2 i {
+            background: var(--gradient-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 0.5rem;
+        }
+
+        /* Insights Panel */
+        .insights-panel {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+        
+        .insight-item {
+            padding: 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+        
+        .insight-positive {
+            background: rgba(52, 211, 153, 0.1);
+            border-left-color: var(--success-color);
+        }
+        
+        .insight-warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-left-color: var(--warning-color);
+        }
+        
+        .insight-alert {
+            background: rgba(248, 113, 113, 0.1);
+            border-left-color: var(--danger-color);
+        }
+        
+        .insight-item h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .insight-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Loading and Empty States */
+        .loading {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .error {
+            background: #fee2e2;
+            color: var(--danger-color);
+            border: 1px solid #fca5a5;
+        }
+        
+        /* Footer */
+        .dashboard-footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-layout {
+                grid-template-columns: 280px 1fr;
+                gap: 2rem;
+            }
+            
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                order: 1;
+            }
+            
+            .main-content {
+                order: 2;
+            }
+            
+            .hero-header {
+                padding: 2.5rem 2rem;
+            }
+            
+            .hero-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .chart-container {
+                height: 280px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1400px;
+                padding: 2rem;
+            }
+            
+            .dashboard-layout {
+                grid-template-columns: 300px 1fr;
+            }
+            
+            .hero-header {
+                padding: 3rem 2rem;
+            }
+            
+            .hero-header h1 {
+                font-size: 3rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.75rem;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .table-controls {
+                justify-content: center;
+            }
+
+            .time-toggle {
+                order: 1;
+                margin-bottom: 0.5rem;
+            }
+
+            .comparison-view {
+                grid-template-columns: 1fr;
+            }
+            
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pulse animation for stats */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .stat-card.updated {
+            animation: pulse 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-heartbeat logo-icon"></i>
+                <span>HealthTracker Pro</span>
+            </div>
+        </div>
+        <div class="theme-toggle" id="themeToggle">
+            <i class="fas fa-sun sun-icon theme-icon"></i>
+            <i class="fas fa-moon moon-icon theme-icon"></i>
+        </div>
+    </div>
+    <div class="medical-reference">
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+        <div style="text-align: center; padding: 0.75rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); margin: 1rem 0;">
+            <small style="color: var(--text-secondary);">
+                <i class="fas fa-info-circle"></i>
+                Blood pressure categories based on <a href="https://www.who.int/news-room/fact-sheets/detail/hypertension" target="_blank" style="color: var(--primary-color); text-decoration: none;">World Health Organization (WHO) guidelines</a> and <a href="https://apps.who.int/iris/bitstream/handle/10665/79059/WHO_DCO_WHD_2013.2_eng.pdf" target="_blank" style="color: var(--primary-color); text-decoration: none;">WHO Technical Report</a> as adopted by Ghana Health Service
+            </small>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        <div class="dashboard-layout">
+            <!-- Sidebar with controls and insights -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Date Range</h3>
+                    <div class="date-range-selector">
+                        <div class="custom-date-inputs">
+                            <input type="date" id="startDate" value="">
+                            <input type="date" id="endDate" value="">
+                        </div>
+                        <div class="preset-buttons">
+                            <div class="preset-btn active" data-preset="all">All Time</div>
+                            <div class="preset-btn" data-preset="month">This Month</div>
+                            <div class="preset-btn" data-preset="week">This Week</div>
+                            <div class="preset-btn" data-preset="year">This Year</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-chart-pie"></i> BP Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="bpDistributionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-heartbeat"></i> Health Status</h3>
+                    <div class="health-status">
+                        <div class="status-indicator status-good" id="healthStatusIndicator">
+                            <span>Good</span>
+                        </div>
+                        <p id="healthStatusText">Your blood pressure is within normal ranges.</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-bullseye"></i> Goals</h3>
+                    <div class="goal-progress">
+                        <div class="goal-item">
+                            <div class="goal-label">BP Control</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <div class="goal-percent">75%</div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-label">Weekly Readings</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <div class="goal-percent">60%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="hero-header">
+                    <div class="refresh-time" id="lastRefresh">Last updated: --</div>
+                    
+                    <h1>
+                        <i class="fas fa-heartbeat"></i>
+                        Health Dashboard
+                    </h1>
+                    <p>Advanced health monitoring with morning/evening analytics</p>
+                    <div class="user-badge">
+                        <i class="fas fa-chart-line"></i>
+                        Advanced Analytics Enabled
+                    </div>
+                </div>
+
+                <!-- Stats Grid - Keep only these 3 cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-content">
+                            <div class="stat-info">
+                                <h3>Latest Blood Pressure</h3>
+                                <div class="stat-value" id="latestBP">--/--</div>
+                                <div id="latestCategory"></div>
+                                <div class="stat-trend" id="bpTrend">
+                                    <i class="fas fa-minus"></i>
+                                    <span>No trend data</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-heartbeat stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-content">
+                            <div class="stat-info">
+                                <h3>Average Blood Pressure</h3>
+                                <div class="stat-value" id="avgBP">--/--</div>
+                                <small style="color: var(--text-secondary); font-size: 0.75rem;">Last 30 days</small>
+                                <div class="stat-trend" id="avgTrend">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Calculating...</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-chart-line stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-content">
+                            <div class="stat-info">
+                                <h3>Current Weight</h3>
+                                <div class="stat-value" id="latestWeight">-- lbs</div>
+                                <div class="stat-trend" id="weightTrend">
+                                    <i class="fas fa-weight"></i>
+                                    <span>No trend data</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-weight stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Readings Table - Now comes right after stats -->
+                <div class="readings-table">
+                    <div class="table-header">
+                        <h2>
+                            <i class="fas fa-history"></i>
+                            Recent Readings
+                        </h2>
+                        <div class="table-controls">
+                            <div class="time-toggle">
+                                <button class="time-toggle-btn active" data-view="all" id="allReadingsBtn">All Readings</button>
+                                <button class="time-toggle-btn" data-view="morning-evening" id="morningEveningBtn">Morning vs Evening</button>
+                            </div>
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="week">This Week</button>
+                            <button class="filter-btn" data-filter="month">This Month</button>
+                        </div>
+                    </div>
+                    <div class="table-container" id="tableContainer">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading health data...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <h2>
+                            <i class="fas fa-chart-line"></i>
+                            Blood Pressure Trends
+                        </h2>
+                        <div class="chart-container">
+                            <canvas id="bpChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights Panel -->
+                <div class="insights-panel">
+                    <h2>
+                        <i class="fas fa-lightbulb"></i>
+                        Smart Insights
+                    </h2>
+                    <div id="insightsContainer">
+                        <div class="insight-item insight-positive">
+                            <h4><i class="fas fa-check-circle"></i> Positive Trend</h4>
+                            <p>Your blood pressure has shown improvement over the last 2 weeks.</p>
+                        </div>
+                        <div class="insight-item insight-warning">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Consistency Alert</h4>
+                            <p>Consider taking readings at the same time each day for more accurate trends.</p>
+                        </div>
+                        <div class="insight-item insight-alert">
+                            <h4><i class="fas fa-bell"></i> Morning vs Evening</h4>
+                            <p>Your evening readings tend to be 5-10 mmHg higher than morning readings.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-footer">
+                    <p>HealthTracker Pro Dashboard • Last updated: <span id="footerDate">--</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Configuration - YOUR EXISTING CONFIG
+    const CONFIG = {
+        SHEET_ID: '1CuERI5x-BYp6k-JG9yUHymi6QnxH96op6iTAdIBs4zs',
+        SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxU0oNN0Z9C7psq2mmrcwoeklbtIEJaqhaI3rQqhEWsoOLLI3lgEkEkdNzE-jRH2crAMg/exec'
+    };
+
+    let chartInstances = {};
+    let allReadings = [];
+    let filteredReadings = [];
+    let currentFilter = 'all';
+    let currentDateRange = 'all';
+    let currentView = 'all'; // 'all' or 'morning-evening'
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadReadings();
+        setupEventListeners();
+        updateLastRefreshTime();
+        setupThemeToggle();
+        initializeDateSelectors();
+    });
+
+    function setupThemeToggle() {
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Set dark mode as default
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update all charts when theme changes
+            Object.values(chartInstances).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            updateAllCharts();
+        });
+    }
+
+    function initializeDateSelectors() {
+        const today = new Date();
+        const oneMonthAgo = new Date(today);
+        oneMonthAgo.setMonth(today.getMonth() - 1);
+        
+        document.getElementById('startDate').valueAsDate = oneMonthAgo;
+        document.getElementById('endDate').valueAsDate = today;
+        
+        document.getElementById('startDate').addEventListener('change', applyDateFilter);
+        document.getElementById('endDate').addEventListener('change', applyDateFilter);
+        
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentDateRange = this.dataset.preset;
+                applyDateFilter();
+            });
+        });
+    }
+
+    function setupEventListeners() {
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                applyFilter();
+            });
+        });
+
+        // Morning/Evening toggle
+        document.querySelectorAll('.time-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.time-toggle-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentView = e.target.dataset.view;
+                updateTable();
+            });
+        });
+    }
+
+    function applyDateFilter() {
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    
+    let startDate, endDate;
+    
+    if (currentDateRange === 'all') {
+        filteredReadings = [...allReadings];
+    } else {
+        const today = new Date();
+        endDate = new Date(today);
+        
+        switch(currentDateRange) {
+            case 'week':
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7);
+                break;
+            case 'month':
+                startDate = new Date(today);
+                startDate.setMonth(today.getMonth() - 1);
+                break;
+            case 'year':
+                startDate = new Date(today);
+                startDate.setFullYear(today.getFullYear() - 1);
+                break;
+            default:
+                startDate = startDateInput.valueAsDate;
+                endDate = endDateInput.valueAsDate;
+        }
+        
+        if (startDate && endDate) {
+            // Set end date to end of day for proper filtering
+            endDate.setHours(23, 59, 59, 999);
+            startDate.setHours(0, 0, 0, 0);
+            
+            filteredReadings = allReadings.filter(r => {
+                const readingDate = new Date(r.timestamp);
+                return readingDate >= startDate && readingDate <= endDate;
+            });
+        } else {
+            filteredReadings = [...allReadings];
+        }
+    }
+    
+    updateDashboard();
+}
+
+    function updateLastRefreshTime() {
+        const now = new Date();
+        document.getElementById('lastRefresh').textContent =
+            `Last updated: ${now.toLocaleTimeString()}`;
+        document.getElementById('footerDate').textContent = now.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+    }
+
+    async function loadReadings() {
+        try {
+            const url = `${CONFIG.SCRIPT_URL}?sheetId=${CONFIG.SHEET_ID}`;
+            console.log('Fetching from Apps Script:', url);
+
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const result = await response.json();
+            console.log('Apps Script Response:', result);
+
+            if (!result.success) throw new Error(result.error || 'Unknown error from Apps Script');
+
+            allReadings = result.data || [];
+            allReadings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            console.log('Processed readings:', allReadings);
+
+            applyFilter();
+            updateLastRefreshTime();
+        } catch (error) {
+            console.error('Error loading data:', error);
+            document.getElementById('tableContainer').innerHTML =
+                `<div class="message error">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Error loading data: ${error.message}
+                </div>`;
+        }
+    }
+
+    function applyFilter() {
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        switch (currentFilter) {
+            case 'week':
+                filteredReadings = allReadings.filter(r => new Date(r.timestamp) >= oneWeekAgo);
+                break;
+            case 'month':
+                filteredReadings = allReadings.filter(r => new Date(r.timestamp) >= oneMonthAgo);
+                break;
+            default:
+                filteredReadings = [...allReadings];
+        }
+
+        updateDashboard();
+    }
+
+    function updateDashboard() {
+        updateStats();
+        updateAllCharts();
+        updateTable();
+        updateInsights();
+        updateHealthStatus();
+    }
+
+    function updateStats() {
+        if (allReadings.length === 0) {
+            document.getElementById('latestBP').textContent = '--/--';
+            document.getElementById('avgBP').textContent = '--/--';
+            document.getElementById('latestWeight').textContent = '-- lbs';
+            document.getElementById('latestCategory').innerHTML = '';
+            return;
+        }
+
+        const latest = allReadings[0];
+        const avgSys = Math.round(allReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / allReadings.length);
+        const avgDia = Math.round(allReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / allReadings.length);
+
+        document.getElementById('latestBP').textContent = `${latest.systolic}/${latest.diastolic}`;
+        document.getElementById('avgBP').textContent = `${avgSys}/${avgDia}`;
+        document.getElementById('latestWeight').textContent = latest.weight ? `${latest.weight} lbs` : '-- lbs';
+
+        const category = getBPCategory(parseInt(latest.systolic), parseInt(latest.diastolic));
+        document.getElementById('latestCategory').innerHTML =
+            `<span class="stat-category ${category.class}">${category.name}</span>`;
+
+        updateTrends();
+    }
+
+    function updateTrends() {
+        if (allReadings.length < 2) return;
+        const latest = allReadings[0];
+        const previous = allReadings[1];
+
+        // BP Trend
+        const sysDiff = parseInt(latest.systolic) - parseInt(previous.systolic);
+        const bpTrendEl = document.getElementById('bpTrend');
+        if (sysDiff > 5) {
+            bpTrendEl.innerHTML = '<i class="fas fa-arrow-up"></i><span>Rising trend</span>';
+            bpTrendEl.className = 'stat-trend trend-up';
+        } else if (sysDiff < -5) {
+            bpTrendEl.innerHTML = '<i class="fas fa-arrow-down"></i><span>Improving trend</span>';
+            bpTrendEl.className = 'stat-trend trend-down';
+        } else {
+            bpTrendEl.innerHTML = '<i class="fas fa-minus"></i><span>Stable</span>';
+            bpTrendEl.className = 'stat-trend trend-stable';
+        }
+
+        // Weight Trend
+        if (latest.weight && previous.weight) {
+            const weightDiff = parseFloat(latest.weight) - parseFloat(previous.weight);
+            const weightTrendEl = document.getElementById('weightTrend');
+            if (weightDiff > 1) {
+                weightTrendEl.innerHTML = `<i class="fas fa-arrow-up"></i><span>+${weightDiff.toFixed(1)} lbs</span>`;
+                weightTrendEl.className = 'stat-trend trend-up';
+            } else if (weightDiff < -1) {
+                weightTrendEl.innerHTML = `<i class="fas fa-arrow-down"></i><span>${weightDiff.toFixed(1)} lbs</span>`;
+                weightTrendEl.className = 'stat-trend trend-down';
+            } else {
+                weightTrendEl.innerHTML = '<i class="fas fa-minus"></i><span>Stable weight</span>';
+                weightTrendEl.className = 'stat-trend trend-stable';
+            }
+        }
+    }
+
+    function getTimeOfDay(timestamp) {
+        const date = new Date(timestamp);
+        const hour = date.getHours();
+        return hour < 12 ? 'morning' : 'evening';
+    }
+
+    function updateTable() {
+        const container = document.getElementById('tableContainer');
+        if (filteredReadings.length === 0) {
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-line"></i><h3>No readings for selected period</h3><p>Try selecting a different time range or check back later</p></div>`;
+            return;
+        }
+
+        if (currentView === 'morning-evening') {
+            renderMorningEveningComparison(container);
+        } else {
+            renderAllReadingsTable(container);
+        }
+    }
+
+    function renderAllReadingsTable(container) {
+        const tableHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Recorded By</th><th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredReadings.slice(0, 30).map(reading => {
+                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                        const dateObj = reading.timestamp ? new Date(reading.timestamp) : new Date();
+                        const dateStr = dateObj.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                        const timeOfDay = getTimeOfDay(reading.timestamp);
+                        
+                        const bpColorClass = `bp-${category.class}`;
+                        
+                        return `<tr>
+                            <td class="date-cell">${dateStr}</td>
+                            <td class="time-cell">
+                                ${timeStr}
+                                <div class="time-of-day ${timeOfDay}-time">${timeOfDay}</div>
+                            </td>
+                            <td><span class="bp-reading ${bpColorClass}">${reading.systolic}/${reading.diastolic}</span></td>
+                            <td><span class="stat-category ${category.class}">${category.name}</span></td>
+                            <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
+                            <td>${reading.recordedBy || 'Unknown'}</td>
+                            <td>${reading.notes || ''}</td>
+                        </tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+        container.innerHTML = tableHTML;
+    }
+function renderMorningEveningComparison(container) {
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    
+    // Check if it's a single date selection
+    const isSingleDate = startDateInput.value === endDateInput.value && startDateInput.value !== '';
+    
+    // Separate readings by time of day
+    const morningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'morning');
+    const eveningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'evening');
+
+    if (isSingleDate) {
+        // Single date view - show individual readings
+        const comparisonHTML = `
+            <div class="comparison-view">
+                <div class="comparison-section">
+                    <h3><i class="fas fa-sun"></i> Morning Readings - ${startDateInput.value}</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${morningReadings.length > 0 ? `
+                            <table>
+                                <thead>
+                                    <tr><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Notes</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${morningReadings.map(reading => {
+                                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                        const dateObj = new Date(reading.timestamp);
+                                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                                        return `<tr>
+                                            <td class="time-cell">${timeStr}</td>
+                                            <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
+                                            <td><span class="stat-category ${category.class}">${category.name}</span></td>
+                                            <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
+                                            <td>${reading.notes || '—'}</td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        ` : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No morning readings for this date</p>'}
+                    </div>
+                </div>
+
+                <div class="comparison-section">
+                    <h3><i class="fas fa-moon"></i> Evening Readings - ${startDateInput.value}</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${eveningReadings.length > 0 ? `
+                            <table>
+                                <thead>
+                                    <tr><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Notes</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${eveningReadings.map(reading => {
+                                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                        const dateObj = new Date(reading.timestamp);
+                                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                                        return `<tr>
+                                            <td class="time-cell">${timeStr}</td>
+                                            <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
+                                            <td><span class="stat-category ${category.class}">${category.name}</span></td>
+                                            <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
+                                            <td>${reading.notes || '—'}</td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        ` : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No evening readings for this date</p>'}
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML = comparisonHTML;
+    } else {
+        // Date range view - show summary with averages
+        const morningAvgSys = morningReadings.length > 0 ? 
+            Math.round(morningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / morningReadings.length) : 0;
+        const morningAvgDia = morningReadings.length > 0 ? 
+            Math.round(morningReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / morningReadings.length) : 0;
+        const eveningAvgSys = eveningReadings.length > 0 ? 
+            Math.round(eveningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / eveningReadings.length) : 0;
+        const eveningAvgDia = eveningReadings.length > 0 ? 
+            Math.round(eveningReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / eveningReadings.length) : 0;
+
+        const comparisonHTML = `
+            <div class="comparison-view">
+                <div class="comparison-section">
+                    <h3><i class="fas fa-sun"></i> Morning Readings</h3>
+                    <div class="comparison-stats">
+                        <div class="comparison-stat">
+                            <span class="comparison-stat-label">Average BP</span>
+                            <span class="comparison-stat-value">${morningAvgSys}/${morningAvgDia}</span>
+                        </div>
+                        <div class="comparison-stat">
+                            <span class="comparison-stat-label">Total Readings</span>
+                            <span class="comparison-stat-value">${morningReadings.length}</span>
+                        </div>
+                        <div class="comparison-stat">
+                            <span class="comparison-stat-label">Latest</span>
+                            <span class="comparison-stat-value">
+                                ${morningReadings.length > 0 ? 
+                                    `${morningReadings[0].systolic}/${morningReadings[0].diastolic}` : 
+                                    'No data'
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table style="font-size: 0.7rem;">
+                            <thead>
+                                <tr><th>Date</th><th>Time</th><th>BP</th></tr>
+                            </thead>
+                            <tbody>
+                                ${morningReadings.slice(0, 10).map(reading => {
+                                    const dateObj = new Date(reading.timestamp);
+                                    const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                    return `<tr>
+                                        <td>${dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric' })}</td>
+                                        <td>${dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true })}</td>
+                                        <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
+                                    </tr>`;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="comparison-section">
+                    <h3><i class="fas fa-moon"></i> Evening Readings</h3>
+                    <div class="comparison-stats">
+                        <div class="comparison-stat">
+                            <span class="comparison-stat-label">Average BP</span>
+                            <span class="comparison-stat-value">${eveningAvgSys}/${eveningAvgDia}</span>
+                        </div>
+                        <div class="comparison-stat">
+                            <span class="comparison-stat-label">Total Readings</span>
+                            <span class="comparison-stat-value">${eveningReadings.length}</span>
+                        </div>
+                        <div class="comparison-stat">
+                            <span class="comparison-stat-label">Latest</span>
+                            <span class="comparison-stat-value">
+                                ${eveningReadings.length > 0 ? 
+                                    `${eveningReadings[0].systolic}/${eveningReadings[0].diastolic}` : 
+                                    'No data'
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table style="font-size: 0.7rem;">
+                            <thead>
+                                <tr><th>Date</th><th>Time</th><th>BP</th></tr>
+                            </thead>
+                            <tbody>
+                                ${eveningReadings.slice(0, 10).map(reading => {
+                                    const dateObj = new Date(reading.timestamp);
+                                    const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                    return `<tr>
+                                        <td>${dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric' })}</td>
+                                        <td>${dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true })}</td>
+                                        <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
+                                    </tr>`;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML = comparisonHTML;
+    }
+}
+
+    function updateAllCharts() {
+        updateBPChart();
+        updateBPDistributionChart();
+    }
+
+    function updateBPChart() {
+        const ctx = document.getElementById('bpChart').getContext('2d');
+        if (chartInstances.bpChart) chartInstances.bpChart.destroy();
+
+        if (filteredReadings.length === 0) {
+            renderEmptyChart(ctx, 'Blood Pressure Trends');
+            return;
+        }
+
+        const chartData = filteredReadings.slice().reverse().slice(-30).map(reading => {
+            const dateObj = reading.timestamp ? new Date(reading.timestamp) : new Date();
+            return {
+                date: dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                fullDate: dateObj,
+                systolic: parseInt(reading.systolic),
+                diastolic: parseInt(reading.diastolic),
+                timeOfDay: getTimeOfDay(reading.timestamp)
+            };
+        });
+
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+        const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+        
+        chartInstances.bpChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.map(d => d.date),
+                datasets: [
+                    {
+                        label: 'Systolic',
+                        data: chartData.map(d => d.systolic),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239,68,68,0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: chartData.map(d => d.timeOfDay === 'morning' ? '#3b82f6' : '#8b5cf6'),
+                        pointBorderColor: chartData.map(d => d.timeOfDay === 'morning' ? '#3b82f6' : '#8b5cf6')
+                    }, 
+                    {
+                        label: 'Diastolic',
+                        data: chartData.map(d => d.diastolic),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: chartData.map(d => d.timeOfDay === 'morning' ? '#3b82f6' : '#8b5cf6'),
+                        pointBorderColor: chartData.map(d => d.timeOfDay === 'morning' ? '#3b82f6' : '#8b5cf6')
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'top',
+                        labels: {
+                            color: textColor
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                const dataPoint = chartData[context[0].dataIndex];
+                                return `${dataPoint.fullDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} (${dataPoint.timeOfDay})`;
+                            },
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y} mmHg`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: borderColor
+                        },
+                        ticks: {
+                            color: textColor
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: borderColor
+                        },
+                        ticks: {
+                            color: textColor
+                        },
+                        title: {
+                            display: true,
+                            text: 'mmHg',
+                            color: textColor
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateBPDistributionChart() {
+        const ctx = document.getElementById('bpDistributionChart').getContext('2d');
+        if (chartInstances.bpDistributionChart) chartInstances.bpDistributionChart.destroy();
+
+        if (filteredReadings.length === 0) {
+            renderEmptyChart(ctx, 'BP Distribution');
+            return;
+        }
+
+        // Count BP categories
+        const categories = {
+            normal: 0,
+            elevated: 0,
+            high: 0,
+            crisis: 0
+        };
+
+        filteredReadings.forEach(reading => {
+            const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+            categories[category.class]++;
+        });
+
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+        
+        chartInstances.bpDistributionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+               labels: ['Optimal/Normal', 'High-Normal', 'Grade 1&2 Hypertension', 'Grade 3 Hypertension'],
+                datasets: [{
+                    data: [categories.normal, categories.elevated, categories.high, categories.crisis],
+                    backgroundColor: [
+                        'rgba(52, 211, 153, 0.7)',
+                        'rgba(251, 191, 36, 0.7)',
+                        'rgba(248, 113, 113, 0.7)',
+                        'rgba(220, 38, 38, 0.7)'
+                    ],
+                    borderColor: [
+                        '#34d399',
+                        '#fbbf24',
+                        '#f87171',
+                        '#dc2626'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: textColor,
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderEmptyChart(ctx, title) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+        ctx.fillStyle = textColor;
+        ctx.font = '14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2 - 10);
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText(title, ctx.canvas.width / 2, ctx.canvas.height / 2 + 10);
+    }
+
+    function updateInsights() {
+        const insightsContainer = document.getElementById('insightsContainer');
+        
+        if (filteredReadings.length === 0) {
+            insightsContainer.innerHTML = `
+                <div class="insight-item insight-warning">
+                    <h4><i class="fas fa-info-circle"></i> No Data</h4>
+                    <p>Start adding health readings to see insights and recommendations.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let insightsHTML = '';
+
+        // Morning vs Evening Analysis
+        const morningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'morning');
+        const eveningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'evening');
+        
+        if (morningReadings.length > 0 && eveningReadings.length > 0) {
+            const morningAvg = morningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / morningReadings.length;
+            const eveningAvg = eveningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / eveningReadings.length;
+            const difference = Math.abs(eveningAvg - morningAvg);
+            
+            if (difference > 10) {
+                const higher = eveningAvg > morningAvg ? 'evening' : 'morning';
+                const lower = higher === 'evening' ? 'morning' : 'evening';
+                insightsHTML += `
+                    <div class="insight-item insight-alert">
+                        <h4><i class="fas fa-clock"></i> Time-Based Variation</h4>
+                        <p>Your ${higher} readings are ${Math.round(difference)} mmHg higher than ${lower} readings on average. This is significant and worth discussing with your healthcare provider.</p>
+                    </div>
+                `;
+            } else if (difference > 5) {
+                const higher = eveningAvg > morningAvg ? 'evening' : 'morning';
+                insightsHTML += `
+                    <div class="insight-item insight-warning">
+                        <h4><i class="fas fa-clock"></i> Mild Time Variation</h4>
+                        <p>Your ${higher} readings tend to be slightly higher (${Math.round(difference)} mmHg). This is within normal variation.</p>
+                    </div>
+                `;
+            } else {
+                insightsHTML += `
+                    <div class="insight-item insight-positive">
+                        <h4><i class="fas fa-check-circle"></i> Consistent Readings</h4>
+                        <p>Your morning and evening readings are very consistent (difference: ${Math.round(difference)} mmHg).</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Trend analysis
+        if (filteredReadings.length >= 7) {
+            const recentReadings = filteredReadings.slice(0, 7);
+            const oldReadings = filteredReadings.slice(7, 14);
+            
+            if (oldReadings.length >= 7) {
+                const recentAvg = recentReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / 7;
+                const oldAvg = oldReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / 7;
+                
+                if (recentAvg < oldAvg - 5) {
+                    insightsHTML += `
+                        <div class="insight-item insight-positive">
+                            <h4><i class="fas fa-trending-down"></i> Positive Trend</h4>
+                            <p>Your blood pressure has decreased by ${Math.round(oldAvg - recentAvg)} mmHg over the last week.</p>
+                        </div>
+                    `;
+                } else if (recentAvg > oldAvg + 5) {
+                    insightsHTML += `
+                        <div class="insight-item insight-alert">
+                            <h4><i class="fas fa-trending-up"></i> Rising Trend</h4>
+                            <p>Your blood pressure has increased by ${Math.round(recentAvg - oldAvg)} mmHg over the last week.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Consistency check
+        const readingDays = new Set(filteredReadings.map(r => new Date(r.timestamp).toDateString())).size;
+        const totalDays = Math.ceil((new Date() - new Date(filteredReadings[filteredReadings.length-1].timestamp)) / (1000 * 60 * 60 * 24));
+        
+        if (readingDays / totalDays < 0.5) {
+            insightsHTML += `
+                <div class="insight-item insight-warning">
+                    <h4><i class="fas fa-calendar-times"></i> Inconsistent Monitoring</h4>
+                    <p>You're recording readings on only ${Math.round(readingDays/totalDays*100)}% of days. More consistent monitoring provides better insights.</p>
+                </div>
+            `;
+        }
+        
+        insightsContainer.innerHTML = insightsHTML || `
+            <div class="insight-item insight-positive">
+                <h4><i class="fas fa-info-circle"></i> Analysis Complete</h4>
+                <p>Your readings look stable. Keep up the consistent monitoring!</p>
+            </div>
+        `;
+    }
+
+    function updateHealthStatus() {
+    const statusIndicator = document.getElementById('healthStatusIndicator');
+    const statusText = document.getElementById('healthStatusText');
+    
+    if (filteredReadings.length === 0) {
+        statusIndicator.className = 'status-indicator status-warning';
+        statusIndicator.innerHTML = '<span>No Data</span>';
+        statusText.textContent = 'Add health readings to assess your status.';
+        return;
+    }
+    
+    const recentReadings = filteredReadings.slice(0, Math.min(7, filteredReadings.length));
+    const avgSystolic = recentReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / recentReadings.length;
+    const avgDiastolic = recentReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / recentReadings.length;
+    
+    if (avgSystolic < 120 && avgDiastolic < 80) {
+        statusIndicator.className = 'status-indicator status-good';
+        statusIndicator.innerHTML = '<span>Optimal</span>';
+        statusText.textContent = 'Your blood pressure is in the optimal range.';
+    } else if ((avgSystolic < 130 && avgDiastolic < 85) || (avgSystolic < 120)) {
+        statusIndicator.className = 'status-indicator status-good';
+        statusIndicator.innerHTML = '<span>Normal</span>';
+        statusText.textContent = 'Your blood pressure is normal.';
+    } else if ((avgSystolic < 140 && avgDiastolic < 90) || (avgSystolic < 130)) {
+        statusIndicator.className = 'status-indicator status-warning';
+        statusIndicator.innerHTML = '<span>High-Normal</span>';
+        statusText.textContent = 'Your blood pressure is high-normal. Monitor regularly.';
+    } else {
+        statusIndicator.className = 'status-indicator status-danger';
+        statusIndicator.innerHTML = '<span>Hypertension</span>';
+        statusText.textContent = 'Your blood pressure indicates hypertension. Consider consulting a healthcare provider.';
+    }
+}
+   function getBPCategory(systolic, diastolic) {
+    if (systolic < 120 && diastolic < 80) return { name: 'Optimal', class: 'normal' };
+    if ((systolic >= 120 && systolic <= 129) || (diastolic >= 80 && diastolic <= 84)) return { name: 'Normal', class: 'normal' };
+    if ((systolic >= 130 && systolic <= 139) || (diastolic >= 85 && diastolic <= 89)) return { name: 'High-Normal', class: 'elevated' };
+    if ((systolic >= 140 && systolic <= 159) || (diastolic >= 90 && diastolic <= 99)) return { name: 'Grade 1 Hypertension', class: 'high' };
+    if ((systolic >= 160 && systolic <= 179) || (diastolic >= 100 && diastolic <= 109)) return { name: 'Grade 2 Hypertension', class: 'high' };
+    if (systolic >= 180 || diastolic >= 110) return { name: 'Grade 3 Hypertension', class: 'crisis' };
+    return { name: 'Unknown', class: 'normal' };
+}
+
+    // Auto-refresh every 5 minutes
+    setInterval(loadReadings, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
