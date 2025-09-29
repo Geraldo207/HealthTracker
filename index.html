@@ -37,6 +37,7 @@
             --elevated-bp-color: #fbbf24;
             --high-bp-color: #f87171;
             --crisis-bp-color: #dc2626;
+            --bg-secondary: #1e293b;
         }
 
         /* Light Mode Colors */
@@ -63,6 +64,7 @@
             --elevated-bp-color: #f59e0b;
             --high-bp-color: #ef4444;
             --crisis-bp-color: #dc2626;
+             --bg-secondary: #f1f5f9;
         }
 
         * {
@@ -174,11 +176,11 @@
         
         /* Sidebar - Now horizontal on mobile */
         .sidebar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            order: 2;
-        }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 1.5rem;
+    order: 2;
+}
         
         .sidebar-section {
             background: var(--card-bg);
@@ -393,10 +395,10 @@
         
         /* Stats Grid */
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
         
         .stat-card {
             background: var(--card-bg);
@@ -901,59 +903,277 @@
             }
         }
         
-        @media (max-width: 480px) {
-            .container {
-                padding: 0.75rem;
-            }
-            
-            .table-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
+    /* ===== ENHANCED RESPONSIVE DESIGN ===== */
+/* Mobile First - Base styles for all devices */
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .dashboard-header {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .logo span {
+        font-size: 1.1rem;
+    }
+    
+    .hero-header {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .hero-header h1 {
+        font-size: 1.75rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .refresh-time {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-top: 1rem;
+        display: inline-block;
+    }
+    
+    /* Stats Grid - Single column */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-value {
+        font-size: 1.75rem;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+    }
+    
+    /* Mobile-optimized table */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        font-size: 0.75rem;
+        min-width: 600px; /* Force horizontal scroll */
+    }
+    
+    th, td {
+        padding: 0.75rem 0.5rem;
+        white-space: nowrap;
+    }
+    
+    /* Better button sizing for touch */
+    .filter-btn, .time-toggle-btn, .preset-btn {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .time-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .table-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    /* Sidebar improvements */
+    .sidebar {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .sidebar-section {
+        padding: 1.25rem;
+    }
+    
+    .preset-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Chart sizing */
+    .chart-container {
+        height: 220px;
+    }
+    
+    /* Comparison view - single column */
+    .comparison-view {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .comparison-section {
+        padding: 1.25rem;
+    }
+    
+    /* Medical reference bar */
+    .medical-reference {
+        padding: 0 0.5rem;
+    }
+    
+    .medical-reference small {
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+}
 
-            .table-controls {
-                justify-content: center;
-            }
+/* Tablet and Small Laptop */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+    }
+    
+    .sidebar {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .hero-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .hero-header h1 {
+        font-size: 2.25rem;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .table-header {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .table-controls {
+        flex-wrap: wrap;
+    }
+}
 
-            .time-toggle {
-                order: 1;
-                margin-bottom: 0.5rem;
-            }
+/* Desktop and Large Screens */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .container {
+        max-width: 1200px;
+        padding: 1.5rem;
+    }
+    
+    .dashboard-layout {
+        grid-template-columns: 320px 1fr;
+        gap: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    
+    .chart-container {
+        height: 280px;
+    }
+}
 
-            .comparison-view {
-                grid-template-columns: 1fr;
-            }
-            
-            th, td {
-                padding: 0.75rem 0.5rem;
-            }
-        }
-        
-        /* Loading Animation */
-        .loading-spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(59, 130, 246, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+/* Extra Large Screens (4K, etc) */
+@media (min-width: 1441px) {
+    .container {
+        max-width: 1600px;
+        padding: 2rem;
+    }
+    
+    .dashboard-layout {
+        grid-template-columns: 350px 1fr;
+        gap: 2.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .hero-header {
+        padding: 3.5rem 2.5rem;
+    }
+    
+    .hero-header h1 {
+        font-size: 3.5rem;
+    }
+    
+    .chart-container {
+        height: 320px;
+    }
+    
+    .sidebar-section {
+        padding: 2rem;
+    }
+}
 
-        /* Pulse animation for stats */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
+/* Ultra-wide screens */
+@media (min-width: 2000px) {
+    .container {
+        max-width: 1900px;
+    }
+    
+    .dashboard-layout {
+        grid-template-columns: 400px 1fr;
+    }
+}
 
-        .stat-card.updated {
-            animation: pulse 0.5s ease-in-out;
-        }
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+    /* Better touch interactions */
+    .stat-card:hover {
+        transform: none; /* Disable hover effects on touch */
+    }
+    
+    .filter-btn, .time-toggle-btn, .preset-btn {
+        min-height: 48px; /* Larger touch targets */
+    }
+    
+    /* Improve scrolling */
+    .table-container {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+}
+
+/* ===== HIGH DPI SCREENS ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .hero-header {
+        background-attachment: fixed; /* Better parallax on retina */
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .theme-toggle, .refresh-time, .table-controls {
+        display: none !important;
+    }
+    
+    .stat-card {
+        break-inside: avoid;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1168,7 +1388,7 @@
         </div>
     </div>
 
-    <script>
+  <script>
     // Configuration - YOUR EXISTING CONFIG
     const CONFIG = {
         SHEET_ID: '1CuERI5x-BYp6k-JG9yUHymi6QnxH96op6iTAdIBs4zs',
@@ -1179,21 +1399,19 @@
     let allReadings = [];
     let filteredReadings = [];
     let currentFilter = 'all';
-    let currentDateRange = 'all';
-    let currentView = 'all'; // 'all' or 'morning-evening'
+    let currentDateRange = 'latest'; // Changed from 'all' to 'latest'
+    let currentView = 'all';
 
     document.addEventListener('DOMContentLoaded', () => {
         loadReadings();
         setupEventListeners();
         updateLastRefreshTime();
         setupThemeToggle();
-        initializeDateSelectors();
+        // Don't initialize date selectors here - wait for data to load
     });
 
     function setupThemeToggle() {
         const themeToggle = document.getElementById('themeToggle');
-        
-        // Set dark mode as default
         document.documentElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
         
@@ -1203,7 +1421,6 @@
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             
-            // Update all charts when theme changes
             Object.values(chartInstances).forEach(chart => {
                 if (chart) chart.destroy();
             });
@@ -1212,38 +1429,63 @@
     }
 
     function initializeDateSelectors() {
-        const today = new Date();
-        const oneMonthAgo = new Date(today);
-        oneMonthAgo.setMonth(today.getMonth() - 1);
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
         
-        document.getElementById('startDate').valueAsDate = oneMonthAgo;
-        document.getElementById('endDate').valueAsDate = today;
+        // Find the latest reading date
+        if (allReadings.length > 0) {
+            const latestDate = new Date(allReadings[0].timestamp);
+            const dateString = latestDate.toISOString().split('T')[0];
+            
+            // Set both dates to the latest reading date
+            startDateInput.value = dateString;
+            endDateInput.value = dateString;
+            
+            console.log('Auto-selected latest date:', dateString);
+        } else {
+            // Fallback to last month if no readings
+            const today = new Date();
+            const oneMonthAgo = new Date(today);
+            oneMonthAgo.setMonth(today.getMonth() - 1);
+            
+            startDateInput.valueAsDate = oneMonthAgo;
+            endDateInput.valueAsDate = today;
+        }
         
-        document.getElementById('startDate').addEventListener('change', applyDateFilter);
-        document.getElementById('endDate').addEventListener('change', applyDateFilter);
+        // Event listeners for date inputs
+        startDateInput.addEventListener('change', () => {
+            currentDateRange = 'custom';
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            applyAllFilters();
+        });
         
+        endDateInput.addEventListener('change', () => {
+            currentDateRange = 'custom';
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            applyAllFilters();
+        });
+        
+        // Preset buttons
         document.querySelectorAll('.preset-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentDateRange = this.dataset.preset;
-                applyDateFilter();
+                applyAllFilters();
             });
         });
     }
 
     function setupEventListeners() {
-        // Filter buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 currentFilter = e.target.dataset.filter;
-                applyFilter();
+                applyAllFilters();
             });
         });
 
-        // Morning/Evening toggle
         document.querySelectorAll('.time-toggle-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.time-toggle-btn').forEach(b => b.classList.remove('active'));
@@ -1254,62 +1496,85 @@
         });
     }
 
-    function applyDateFilter() {
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-    
-    let startDate, endDate;
-    
-    if (currentDateRange === 'all') {
-        filteredReadings = [...allReadings];
-    } else {
-        const today = new Date();
-        endDate = new Date(today);
+    function applyAllFilters() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
         
-        switch(currentDateRange) {
-            case 'week':
-                startDate = new Date(today);
-                startDate.setDate(today.getDate() - 7);
-                break;
-            case 'month':
-                startDate = new Date(today);
-                startDate.setMonth(today.getMonth() - 1);
-                break;
-            case 'year':
-                startDate = new Date(today);
-                startDate.setFullYear(today.getFullYear() - 1);
-                break;
-            default:
-                startDate = startDateInput.valueAsDate;
-                endDate = endDateInput.valueAsDate;
-        }
+        let tempFilteredReadings = [...allReadings];
         
-        if (startDate && endDate) {
-            // Set end date to end of day for proper filtering
+        // Apply date range filter first
+        if (currentDateRange !== 'all') {
+            const today = new Date();
+            let startDate, endDate = new Date(today);
             endDate.setHours(23, 59, 59, 999);
-            startDate.setHours(0, 0, 0, 0);
             
-            filteredReadings = allReadings.filter(r => {
-                const readingDate = new Date(r.timestamp);
-                return readingDate >= startDate && readingDate <= endDate;
-            });
-        } else {
-            filteredReadings = [...allReadings];
+            switch(currentDateRange) {
+                case 'latest':
+                    // Auto-select the latest reading date
+                    if (allReadings.length > 0) {
+                        const latestDate = new Date(allReadings[0].timestamp);
+                        startDate = new Date(latestDate);
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date(latestDate);
+                        endDate.setHours(23, 59, 59, 999);
+                        
+                        // Update date inputs to match
+                        const dateString = latestDate.toISOString().split('T')[0];
+                        startDateInput.value = dateString;
+                        endDateInput.value = dateString;
+                    }
+                    break;
+                case 'week':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 7);
+                    startDate.setHours(0, 0, 0, 0);
+                    break;
+                case 'month':
+                    startDate = new Date(today);
+                    startDate.setMonth(today.getMonth() - 1);
+                    startDate.setHours(0, 0, 0, 0);
+                    break;
+                case 'year':
+                    startDate = new Date(today);
+                    startDate.setFullYear(today.getFullYear() - 1);
+                    startDate.setHours(0, 0, 0, 0);
+                    break;
+                case 'custom':
+                    if (startDateInput.valueAsDate && endDateInput.valueAsDate) {
+                        startDate = new Date(startDateInput.valueAsDate);
+                        endDate = new Date(endDateInput.valueAsDate);
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate.setHours(23, 59, 59, 999);
+                    }
+                    break;
+            }
+            
+            if (startDate && endDate) {
+                tempFilteredReadings = tempFilteredReadings.filter(r => {
+                    const readingDate = new Date(r.timestamp);
+                    return readingDate >= startDate && readingDate <= endDate;
+                });
+            }
         }
+        
+        // Apply additional time filter if needed
+        if (currentFilter === 'week') {
+            const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+            tempFilteredReadings = tempFilteredReadings.filter(r => new Date(r.timestamp) >= oneWeekAgo);
+        } else if (currentFilter === 'month') {
+            const oneMonthAgo = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000);
+            tempFilteredReadings = tempFilteredReadings.filter(r => new Date(r.timestamp) >= oneMonthAgo);
+        }
+        
+        filteredReadings = tempFilteredReadings;
+        updateDashboard();
     }
-    
-    updateDashboard();
-}
 
     function updateLastRefreshTime() {
         const now = new Date();
-        document.getElementById('lastRefresh').textContent =
-            `Last updated: ${now.toLocaleTimeString()}`;
+        document.getElementById('lastRefresh').textContent = `Last updated: ${now.toLocaleTimeString()}`;
         document.getElementById('footerDate').textContent = now.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
     }
 
@@ -1330,7 +1595,9 @@
             allReadings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             console.log('Processed readings:', allReadings);
 
-            applyFilter();
+            // Initialize date selectors AFTER data is loaded
+            initializeDateSelectors();
+            applyAllFilters();
             updateLastRefreshTime();
         } catch (error) {
             console.error('Error loading data:', error);
@@ -1342,25 +1609,6 @@
         }
     }
 
-    function applyFilter() {
-        const now = new Date();
-        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-        switch (currentFilter) {
-            case 'week':
-                filteredReadings = allReadings.filter(r => new Date(r.timestamp) >= oneWeekAgo);
-                break;
-            case 'month':
-                filteredReadings = allReadings.filter(r => new Date(r.timestamp) >= oneMonthAgo);
-                break;
-            default:
-                filteredReadings = [...allReadings];
-        }
-
-        updateDashboard();
-    }
-
     function updateDashboard() {
         updateStats();
         updateAllCharts();
@@ -1370,17 +1618,19 @@
     }
 
     function updateStats() {
-        if (allReadings.length === 0) {
+        if (filteredReadings.length === 0) {
             document.getElementById('latestBP').textContent = '--/--';
             document.getElementById('avgBP').textContent = '--/--';
             document.getElementById('latestWeight').textContent = '-- lbs';
             document.getElementById('latestCategory').innerHTML = '';
+            document.getElementById('bpTrend').innerHTML = '';
+            document.getElementById('weightTrend').innerHTML = '';
             return;
         }
 
-        const latest = allReadings[0];
-        const avgSys = Math.round(allReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / allReadings.length);
-        const avgDia = Math.round(allReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / allReadings.length);
+        const latest = filteredReadings[0];
+        const avgSys = Math.round(filteredReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / filteredReadings.length);
+        const avgDia = Math.round(filteredReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / filteredReadings.length);
 
         document.getElementById('latestBP').textContent = `${latest.systolic}/${latest.diastolic}`;
         document.getElementById('avgBP').textContent = `${avgSys}/${avgDia}`;
@@ -1394,11 +1644,17 @@
     }
 
     function updateTrends() {
-        if (allReadings.length < 2) return;
-        const latest = allReadings[0];
-        const previous = allReadings[1];
+        if (filteredReadings.length < 2) {
+            document.getElementById('bpTrend').innerHTML = '<i class="fas fa-minus"></i><span>Insufficient data</span>';
+            document.getElementById('bpTrend').className = 'stat-trend trend-stable';
+            document.getElementById('weightTrend').innerHTML = '<i class="fas fa-minus"></i><span>Insufficient data</span>';
+            document.getElementById('weightTrend').className = 'stat-trend trend-stable';
+            return;
+        }
 
-        // BP Trend
+        const latest = filteredReadings[0];
+        const previous = filteredReadings[1];
+
         const sysDiff = parseInt(latest.systolic) - parseInt(previous.systolic);
         const bpTrendEl = document.getElementById('bpTrend');
         if (sysDiff > 5) {
@@ -1412,7 +1668,6 @@
             bpTrendEl.className = 'stat-trend trend-stable';
         }
 
-        // Weight Trend
         if (latest.weight && previous.weight) {
             const weightDiff = parseFloat(latest.weight) - parseFloat(previous.weight);
             const weightTrendEl = document.getElementById('weightTrend');
@@ -1438,7 +1693,106 @@
     function updateTable() {
         const container = document.getElementById('tableContainer');
         if (filteredReadings.length === 0) {
-            container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-line"></i><h3>No readings for selected period</h3><p>Try selecting a different time range or check back later</p></div>`;
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            
+            let dateRangeText = 'the selected period';
+            let specificDateInfo = '';
+            let suggestions = '';
+            
+            if (startDateInput.value && endDateInput.value) {
+                if (startDateInput.value === endDateInput.value) {
+                    dateRangeText = `on ${startDateInput.value}`;
+                    specificDateInfo = `No blood pressure readings were recorded on ${startDateInput.value}.`;
+                    suggestions = `Try selecting a different date or check if readings exist for nearby dates.`;
+                } else {
+                    dateRangeText = `from ${startDateInput.value} to ${endDateInput.value}`;
+                    specificDateInfo = `No blood pressure readings were recorded between ${startDateInput.value} and ${endDateInput.value}.`;
+                    suggestions = `Try selecting a different date range.`;
+                }
+            }
+            
+            container.innerHTML = `
+                <div class="error-card" style="
+                    background: var(--card-bg);
+                    border: 2px solid #dc2626;
+                    border-radius: 12px;
+                    padding: 2rem;
+                    text-align: center;
+                    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <!-- Pulsing Red Alert Dot -->
+                    <div style="
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        width: 12px;
+                        height: 12px;
+                        background: #dc2626;
+                        border-radius: 50%;
+                        animation: pulse 2s infinite;
+                    "></div>
+                    
+                    <!-- Main Icon -->
+                    <div style="font-size: 3rem; color: #dc2626; margin-bottom: 1rem;">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    
+                    <!-- Main Message -->
+                    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.5rem;">
+                        No Readings Found
+                    </h3>
+                    
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                        There are no blood pressure readings ${dateRangeText}.
+                    </p>
+                    
+                    <!-- Specific Information -->
+                    <div style="
+                        background: rgba(220, 38, 38, 0.1);
+                        border-left: 4px solid #dc2626;
+                        padding: 1rem;
+                        border-radius: 8px;
+                        margin-bottom: 1.5rem;
+                        text-align: left;
+                    ">
+                        <p style="color: var(--text-primary); margin: 0; font-weight: 500;">
+                            <i class="fas fa-info-circle" style="color: #dc2626; margin-right: 0.5rem;"></i>
+                            ${specificDateInfo}
+                        </p>
+                    </div>
+                    
+                    <!-- Suggestions Box -->
+                    <div style="
+                        background: var(--bg-secondary);
+                        padding: 1.5rem;
+                        border-radius: 8px;
+                        text-align: left;
+                        border: 1px solid var(--border-color);
+                    ">
+                        <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.1rem;">
+                            <i class="fas fa-lightbulb" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+                            Suggestions:
+                        </h4>
+                        <ul style="color: var(--text-secondary); margin: 0; padding-left: 1.5rem;">
+                            <li style="margin-bottom: 0.5rem;">${suggestions}</li>
+                            <li style="margin-bottom: 0.5rem;">Select a date from 2025-09-16 to today's date</li>
+                            <li style="margin-bottom: 0.5rem;">Verify your date range covers periods when readings were taken</li>
+                            <li>Try selecting "All Time" from the preset buttons to see all available data</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <style>
+                    @keyframes pulse {
+                        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+                        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+                        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+                    }
+                </style>
+            `;
             return;
         }
 
@@ -1465,15 +1819,13 @@
                         const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
                         const timeOfDay = getTimeOfDay(reading.timestamp);
                         
-                        const bpColorClass = `bp-${category.class}`;
-                        
                         return `<tr>
                             <td class="date-cell">${dateStr}</td>
                             <td class="time-cell">
                                 ${timeStr}
                                 <div class="time-of-day ${timeOfDay}-time">${timeOfDay}</div>
                             </td>
-                            <td><span class="bp-reading ${bpColorClass}">${reading.systolic}/${reading.diastolic}</span></td>
+                            <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
                             <td><span class="stat-category ${category.class}">${category.name}</span></td>
                             <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
                             <td>${reading.recordedBy || 'Unknown'}</td>
@@ -1485,176 +1837,167 @@
         `;
         container.innerHTML = tableHTML;
     }
-function renderMorningEveningComparison(container) {
-    const startDateInput = document.getElementById('startDate');
-    const endDateInput = document.getElementById('endDate');
-    
-    // Check if it's a single date selection
-    const isSingleDate = startDateInput.value === endDateInput.value && startDateInput.value !== '';
-    
-    // Separate readings by time of day
-    const morningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'morning');
-    const eveningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'evening');
 
-    if (isSingleDate) {
-        // Single date view - show individual readings
-        const comparisonHTML = `
-            <div class="comparison-view">
-                <div class="comparison-section">
-                    <h3><i class="fas fa-sun"></i> Morning Readings - ${startDateInput.value}</h3>
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        ${morningReadings.length > 0 ? `
-                            <table>
+    function renderMorningEveningComparison(container) {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        
+        const isSingleDate = startDateInput.value === endDateInput.value && startDateInput.value !== '';
+        
+        const morningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'morning');
+        const eveningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'evening');
+
+        if (isSingleDate) {
+            const comparisonHTML = `
+                <div class="comparison-view">
+                    <div class="comparison-section">
+                        <h3><i class="fas fa-sun"></i> Morning Readings - ${startDateInput.value}</h3>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${morningReadings.length > 0 ? `
+                                <table>
+                                    <thead>
+                                        <tr><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Notes</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        ${morningReadings.map(reading => {
+                                            const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                            const dateObj = new Date(reading.timestamp);
+                                            const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                                            return `<tr>
+                                                <td class="time-cell">${timeStr}</td>
+                                                <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
+                                                <td><span class="stat-category ${category.class}">${category.name}</span></td>
+                                                <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
+                                                <td>${reading.notes || '—'}</td>
+                                            </tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            ` : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No morning readings for this date</p>'}
+                        </div>
+                    </div>
+
+                    <div class="comparison-section">
+                        <h3><i class="fas fa-moon"></i> Evening Readings - ${startDateInput.value}</h3>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${eveningReadings.length > 0 ? `
+                                <table>
+                                    <thead>
+                                        <tr><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Notes</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        ${eveningReadings.map(reading => {
+                                            const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                            const dateObj = new Date(reading.timestamp);
+                                            const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                                            return `<tr>
+                                                <td class="time-cell">${timeStr}</td>
+                                                <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
+                                                <td><span class="stat-category ${category.class}">${category.name}</span></td>
+                                                <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
+                                                <td>${reading.notes || '—'}</td>
+                                            </tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            ` : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No evening readings for this date</p>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = comparisonHTML;
+        } else {
+            const morningAvgSys = morningReadings.length > 0 ? 
+                Math.round(morningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / morningReadings.length) : 0;
+            const morningAvgDia = morningReadings.length > 0 ? 
+                Math.round(morningReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / morningReadings.length) : 0;
+            const eveningAvgSys = eveningReadings.length > 0 ? 
+                Math.round(eveningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / eveningReadings.length) : 0;
+            const eveningAvgDia = eveningReadings.length > 0 ? 
+                Math.round(eveningReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / eveningReadings.length) : 0;
+
+            const comparisonHTML = `
+                <div class="comparison-view">
+                    <div class="comparison-section">
+                        <h3><i class="fas fa-sun"></i> Morning Readings</h3>
+                        <div class="comparison-stats">
+                            <div class="comparison-stat">
+                                <span class="comparison-stat-label">Average BP</span>
+                                <span class="comparison-stat-value">${morningAvgSys}/${morningAvgDia}</span>
+                            </div>
+                            <div class="comparison-stat">
+                                <span class="comparison-stat-label">Total Readings</span>
+                                <span class="comparison-stat-value">${morningReadings.length}</span>
+                            </div>
+                            <div class="comparison-stat">
+                                <span class="comparison-stat-label">Latest</span>
+                                <span class="comparison-stat-value">
+                                    ${morningReadings.length > 0 ? `${morningReadings[0].systolic}/${morningReadings[0].diastolic}` : 'No data'}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="max-height: 200px; overflow-y: auto;">
+                            <table style="font-size: 0.7rem;">
                                 <thead>
-                                    <tr><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Notes</th></tr>
+                                    <tr><th>Date</th><th>Time</th><th>BP</th></tr>
                                 </thead>
                                 <tbody>
-                                    ${morningReadings.map(reading => {
-                                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                    ${morningReadings.slice(0, 10).map(reading => {
                                         const dateObj = new Date(reading.timestamp);
-                                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
                                         return `<tr>
-                                            <td class="time-cell">${timeStr}</td>
+                                            <td>${dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric' })}</td>
+                                            <td>${dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true })}</td>
                                             <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
-                                            <td><span class="stat-category ${category.class}">${category.name}</span></td>
-                                            <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
-                                            <td>${reading.notes || '—'}</td>
                                         </tr>`;
                                     }).join('')}
                                 </tbody>
                             </table>
-                        ` : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No morning readings for this date</p>'}
+                        </div>
                     </div>
-                </div>
 
-                <div class="comparison-section">
-                    <h3><i class="fas fa-moon"></i> Evening Readings - ${startDateInput.value}</h3>
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        ${eveningReadings.length > 0 ? `
-                            <table>
+                    <div class="comparison-section">
+                        <h3><i class="fas fa-moon"></i> Evening Readings</h3>
+                        <div class="comparison-stats">
+                            <div class="comparison-stat">
+                                <span class="comparison-stat-label">Average BP</span>
+                                <span class="comparison-stat-value">${eveningAvgSys}/${eveningAvgDia}</span>
+                            </div>
+                            <div class="comparison-stat">
+                                <span class="comparison-stat-label">Total Readings</span>
+                                <span class="comparison-stat-value">${eveningReadings.length}</span>
+                            </div>
+                            <div class="comparison-stat">
+                                <span class="comparison-stat-label">Latest</span>
+                                <span class="comparison-stat-value">
+                                    ${eveningReadings.length > 0 ? `${eveningReadings[0].systolic}/${eveningReadings[0].diastolic}` : 'No data'}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="max-height: 200px; overflow-y: auto;">
+                            <table style="font-size: 0.7rem;">
                                 <thead>
-                                    <tr><th>Time</th><th>Blood Pressure</th><th>Category</th><th>Weight</th><th>Notes</th></tr>
+                                    <tr><th>Date</th><th>Time</th><th>BP</th></tr>
                                 </thead>
                                 <tbody>
-                                    ${eveningReadings.map(reading => {
-                                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
+                                    ${eveningReadings.slice(0, 10).map(reading => {
                                         const dateObj = new Date(reading.timestamp);
-                                        const timeStr = dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+                                        const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
                                         return `<tr>
-                                            <td class="time-cell">${timeStr}</td>
+                                            <td>${dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric' })}</td>
+                                            <td>${dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true })}</td>
                                             <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
-                                            <td><span class="stat-category ${category.class}">${category.name}</span></td>
-                                            <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
-                                            <td>${reading.notes || '—'}</td>
                                         </tr>`;
                                     }).join('')}
                                 </tbody>
                             </table>
-                        ` : '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No evening readings for this date</p>'}
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        container.innerHTML = comparisonHTML;
-    } else {
-        // Date range view - show summary with averages
-        const morningAvgSys = morningReadings.length > 0 ? 
-            Math.round(morningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / morningReadings.length) : 0;
-        const morningAvgDia = morningReadings.length > 0 ? 
-            Math.round(morningReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / morningReadings.length) : 0;
-        const eveningAvgSys = eveningReadings.length > 0 ? 
-            Math.round(eveningReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / eveningReadings.length) : 0;
-        const eveningAvgDia = eveningReadings.length > 0 ? 
-            Math.round(eveningReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / eveningReadings.length) : 0;
-
-        const comparisonHTML = `
-            <div class="comparison-view">
-                <div class="comparison-section">
-                    <h3><i class="fas fa-sun"></i> Morning Readings</h3>
-                    <div class="comparison-stats">
-                        <div class="comparison-stat">
-                            <span class="comparison-stat-label">Average BP</span>
-                            <span class="comparison-stat-value">${morningAvgSys}/${morningAvgDia}</span>
-                        </div>
-                        <div class="comparison-stat">
-                            <span class="comparison-stat-label">Total Readings</span>
-                            <span class="comparison-stat-value">${morningReadings.length}</span>
-                        </div>
-                        <div class="comparison-stat">
-                            <span class="comparison-stat-label">Latest</span>
-                            <span class="comparison-stat-value">
-                                ${morningReadings.length > 0 ? 
-                                    `${morningReadings[0].systolic}/${morningReadings[0].diastolic}` : 
-                                    'No data'
-                                }
-                            </span>
-                        </div>
-                    </div>
-                    <div style="max-height: 200px; overflow-y: auto;">
-                        <table style="font-size: 0.7rem;">
-                            <thead>
-                                <tr><th>Date</th><th>Time</th><th>BP</th></tr>
-                            </thead>
-                            <tbody>
-                                ${morningReadings.slice(0, 10).map(reading => {
-                                    const dateObj = new Date(reading.timestamp);
-                                    const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
-                                    return `<tr>
-                                        <td>${dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric' })}</td>
-                                        <td>${dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true })}</td>
-                                        <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="comparison-section">
-                    <h3><i class="fas fa-moon"></i> Evening Readings</h3>
-                    <div class="comparison-stats">
-                        <div class="comparison-stat">
-                            <span class="comparison-stat-label">Average BP</span>
-                            <span class="comparison-stat-value">${eveningAvgSys}/${eveningAvgDia}</span>
-                        </div>
-                        <div class="comparison-stat">
-                            <span class="comparison-stat-label">Total Readings</span>
-                            <span class="comparison-stat-value">${eveningReadings.length}</span>
-                        </div>
-                        <div class="comparison-stat">
-                            <span class="comparison-stat-label">Latest</span>
-                            <span class="comparison-stat-value">
-                                ${eveningReadings.length > 0 ? 
-                                    `${eveningReadings[0].systolic}/${eveningReadings[0].diastolic}` : 
-                                    'No data'
-                                }
-                            </span>
-                        </div>
-                    </div>
-                    <div style="max-height: 200px; overflow-y: auto;">
-                        <table style="font-size: 0.7rem;">
-                            <thead>
-                                <tr><th>Date</th><th>Time</th><th>BP</th></tr>
-                            </thead>
-                            <tbody>
-                                ${eveningReadings.slice(0, 10).map(reading => {
-                                    const dateObj = new Date(reading.timestamp);
-                                    const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
-                                    return `<tr>
-                                        <td>${dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric' })}</td>
-                                        <td>${dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true })}</td>
-                                        <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.innerHTML = comparisonHTML;
+            `;
+            container.innerHTML = comparisonHTML;
+        }
     }
-}
 
     function updateAllCharts() {
         updateBPChart();
@@ -1717,9 +2060,7 @@ function renderMorningEveningComparison(container) {
                 plugins: {
                     legend: { 
                         position: 'top',
-                        labels: {
-                            color: textColor
-                        }
+                        labels: { color: textColor }
                     },
                     tooltip: {
                         callbacks: {
@@ -1734,27 +2075,8 @@ function renderMorningEveningComparison(container) {
                     }
                 },
                 scales: {
-                    x: {
-                        grid: {
-                            color: borderColor
-                        },
-                        ticks: {
-                            color: textColor
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: borderColor
-                        },
-                        ticks: {
-                            color: textColor
-                        },
-                        title: {
-                            display: true,
-                            text: 'mmHg',
-                            color: textColor
-                        }
-                    }
+                    x: { grid: { color: borderColor }, ticks: { color: textColor } },
+                    y: { grid: { color: borderColor }, ticks: { color: textColor }, title: { display: true, text: 'mmHg', color: textColor } }
                 }
             }
         });
@@ -1769,14 +2091,7 @@ function renderMorningEveningComparison(container) {
             return;
         }
 
-        // Count BP categories
-        const categories = {
-            normal: 0,
-            elevated: 0,
-            high: 0,
-            crisis: 0
-        };
-
+        const categories = { normal: 0, elevated: 0, high: 0, crisis: 0 };
         filteredReadings.forEach(reading => {
             const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
             categories[category.class]++;
@@ -1787,21 +2102,11 @@ function renderMorningEveningComparison(container) {
         chartInstances.bpDistributionChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-               labels: ['Optimal/Normal', 'High-Normal', 'Grade 1&2 Hypertension', 'Grade 3 Hypertension'],
+                labels: ['Optimal/Normal', 'High-Normal', 'Grade 1&2 Hypertension', 'Grade 3 Hypertension'],
                 datasets: [{
                     data: [categories.normal, categories.elevated, categories.high, categories.crisis],
-                    backgroundColor: [
-                        'rgba(52, 211, 153, 0.7)',
-                        'rgba(251, 191, 36, 0.7)',
-                        'rgba(248, 113, 113, 0.7)',
-                        'rgba(220, 38, 38, 0.7)'
-                    ],
-                    borderColor: [
-                        '#34d399',
-                        '#fbbf24',
-                        '#f87171',
-                        '#dc2626'
-                    ],
+                    backgroundColor: ['rgba(52, 211, 153, 0.7)', 'rgba(251, 191, 36, 0.7)', 'rgba(248, 113, 113, 0.7)', 'rgba(220, 38, 38, 0.7)'],
+                    borderColor: ['#34d399', '#fbbf24', '#f87171', '#dc2626'],
                     borderWidth: 1
                 }]
             },
@@ -1809,15 +2114,7 @@ function renderMorningEveningComparison(container) {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: textColor,
-                            font: {
-                                size: 10
-                            }
-                        }
-                    }
+                    legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } }
                 }
             }
         });
@@ -1840,8 +2137,8 @@ function renderMorningEveningComparison(container) {
         if (filteredReadings.length === 0) {
             insightsContainer.innerHTML = `
                 <div class="insight-item insight-warning">
-                    <h4><i class="fas fa-info-circle"></i> No Data</h4>
-                    <p>Start adding health readings to see insights and recommendations.</p>
+                    <h4><i class="fas fa-info-circle"></i> No Data Available</h4>
+                    <p>No readings found for the selected date range. Try selecting a different period or check if readings exist in your Google Sheet.</p>
                 </div>
             `;
             return;
@@ -1934,50 +2231,51 @@ function renderMorningEveningComparison(container) {
     }
 
     function updateHealthStatus() {
-    const statusIndicator = document.getElementById('healthStatusIndicator');
-    const statusText = document.getElementById('healthStatusText');
-    
-    if (filteredReadings.length === 0) {
-        statusIndicator.className = 'status-indicator status-warning';
-        statusIndicator.innerHTML = '<span>No Data</span>';
-        statusText.textContent = 'Add health readings to assess your status.';
-        return;
+        const statusIndicator = document.getElementById('healthStatusIndicator');
+        const statusText = document.getElementById('healthStatusText');
+        
+        if (filteredReadings.length === 0) {
+            statusIndicator.className = 'status-indicator status-warning';
+            statusIndicator.innerHTML = '<span>No Data</span>';
+            statusText.textContent = 'No readings available for the selected date range.';
+            return;
+        }
+        
+        const recentReadings = filteredReadings.slice(0, Math.min(7, filteredReadings.length));
+        const avgSystolic = recentReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / recentReadings.length;
+        const avgDiastolic = recentReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / recentReadings.length;
+        
+        if (avgSystolic < 120 && avgDiastolic < 80) {
+            statusIndicator.className = 'status-indicator status-good';
+            statusIndicator.innerHTML = '<span>Optimal</span>';
+            statusText.textContent = 'Your blood pressure is in the optimal range.';
+        } else if ((avgSystolic < 130 && avgDiastolic < 85) || (avgSystolic < 120)) {
+            statusIndicator.className = 'status-indicator status-good';
+            statusIndicator.innerHTML = '<span>Normal</span>';
+            statusText.textContent = 'Your blood pressure is normal.';
+        } else if ((avgSystolic < 140 && avgDiastolic < 90) || (avgSystolic < 130)) {
+            statusIndicator.className = 'status-indicator status-warning';
+            statusIndicator.innerHTML = '<span>High-Normal</span>';
+            statusText.textContent = 'Your blood pressure is high-normal. Monitor regularly.';
+        } else {
+            statusIndicator.className = 'status-indicator status-danger';
+            statusIndicator.innerHTML = '<span>Hypertension</span>';
+            statusText.textContent = 'Your blood pressure indicates hypertension. Consider consulting a healthcare provider.';
+        }
     }
-    
-    const recentReadings = filteredReadings.slice(0, Math.min(7, filteredReadings.length));
-    const avgSystolic = recentReadings.reduce((sum, r) => sum + parseInt(r.systolic), 0) / recentReadings.length;
-    const avgDiastolic = recentReadings.reduce((sum, r) => sum + parseInt(r.diastolic), 0) / recentReadings.length;
-    
-    if (avgSystolic < 120 && avgDiastolic < 80) {
-        statusIndicator.className = 'status-indicator status-good';
-        statusIndicator.innerHTML = '<span>Optimal</span>';
-        statusText.textContent = 'Your blood pressure is in the optimal range.';
-    } else if ((avgSystolic < 130 && avgDiastolic < 85) || (avgSystolic < 120)) {
-        statusIndicator.className = 'status-indicator status-good';
-        statusIndicator.innerHTML = '<span>Normal</span>';
-        statusText.textContent = 'Your blood pressure is normal.';
-    } else if ((avgSystolic < 140 && avgDiastolic < 90) || (avgSystolic < 130)) {
-        statusIndicator.className = 'status-indicator status-warning';
-        statusIndicator.innerHTML = '<span>High-Normal</span>';
-        statusText.textContent = 'Your blood pressure is high-normal. Monitor regularly.';
-    } else {
-        statusIndicator.className = 'status-indicator status-danger';
-        statusIndicator.innerHTML = '<span>Hypertension</span>';
-        statusText.textContent = 'Your blood pressure indicates hypertension. Consider consulting a healthcare provider.';
+
+    function getBPCategory(systolic, diastolic) {
+        if (systolic < 120 && diastolic < 80) return { name: 'Optimal', class: 'normal' };
+        if ((systolic >= 120 && systolic <= 129) || (diastolic >= 80 && diastolic <= 84)) return { name: 'Normal', class: 'normal' };
+        if ((systolic >= 130 && systolic <= 139) || (diastolic >= 85 && diastolic <= 89)) return { name: 'High-Normal', class: 'elevated' };
+        if ((systolic >= 140 && systolic <= 159) || (diastolic >= 90 && diastolic <= 99)) return { name: 'Grade 1 Hypertension', class: 'high' };
+        if ((systolic >= 160 && systolic <= 179) || (diastolic >= 100 && diastolic <= 109)) return { name: 'Grade 2 Hypertension', class: 'high' };
+        if (systolic >= 180 || diastolic >= 110) return { name: 'Grade 3 Hypertension', class: 'crisis' };
+        return { name: 'Unknown', class: 'normal' };
     }
-}
-   function getBPCategory(systolic, diastolic) {
-    if (systolic < 120 && diastolic < 80) return { name: 'Optimal', class: 'normal' };
-    if ((systolic >= 120 && systolic <= 129) || (diastolic >= 80 && diastolic <= 84)) return { name: 'Normal', class: 'normal' };
-    if ((systolic >= 130 && systolic <= 139) || (diastolic >= 85 && diastolic <= 89)) return { name: 'High-Normal', class: 'elevated' };
-    if ((systolic >= 140 && systolic <= 159) || (diastolic >= 90 && diastolic <= 99)) return { name: 'Grade 1 Hypertension', class: 'high' };
-    if ((systolic >= 160 && systolic <= 179) || (diastolic >= 100 && diastolic <= 109)) return { name: 'Grade 2 Hypertension', class: 'high' };
-    if (systolic >= 180 || diastolic >= 110) return { name: 'Grade 3 Hypertension', class: 'crisis' };
-    return { name: 'Unknown', class: 'normal' };
-}
 
     // Auto-refresh every 5 minutes
     setInterval(loadReadings, 5 * 60 * 1000);
-    </script>
+</script>
 </body>
 </html>
