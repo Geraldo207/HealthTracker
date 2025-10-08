@@ -120,11 +120,12 @@
             right: 0;
             background: var(--danger-color);
             color: white;
-            padding: 0.75rem;
+            padding: 0.5rem;
             text-align: center;
             z-index: 999;
             display: none;
             font-weight: 600;
+            font-size: 0.875rem;
             box-shadow: var(--shadow-lg);
         }
         
@@ -137,7 +138,143 @@
             from { transform: translateY(-100%); }
             to { transform: translateY(0); }
         }
-        
+
+        /* Professional danger alert styles */
+        .danger-alert-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .danger-alert-modal.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .danger-alert-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 2px solid #dc2626;
+            position: relative;
+        }
+
+        .danger-alert-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            background: #dc2626;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .danger-alert-content h2 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .danger-reading {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid #dc2626;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .danger-reading-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #dc2626;
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .danger-reading-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .danger-alert-message {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .danger-alert-message p {
+            color: var(--text-primary);
+            margin: 0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .danger-btn-dismiss {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .danger-btn-dismiss:hover {
+            background: var(--primary-dark);
+        }
+
+        .danger-persistent-badge {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: #dc2626;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 998;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .danger-persistent-badge.show {
+            display: flex;
+        }
+
+        .danger-persistent-badge:hover {
+            transform: translateY(-1px);
+        }
+
         .dashboard-header {
             display: flex;
             justify-content: space-between;
@@ -438,7 +575,8 @@
         .toggle-switch:hover .toggle-slider {
             opacity: 0.9;
         }
-.main-content {
+
+        .main-content {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -1076,7 +1214,8 @@
             font-size: 0.75rem;
             border-top: 1px solid var(--border-color);
         }
-/* ===== RESPONSIVE DESIGN ===== */
+
+        /* ===== RESPONSIVE DESIGN ===== */
         
         @media (max-width: 480px) {
             .container {
@@ -1156,6 +1295,22 @@
             .comparison-view {
                 grid-template-columns: 1fr;
                 gap: 1rem;
+            }
+
+            .danger-alert-content {
+                padding: 1.25rem;
+                margin: 0 0.5rem;
+            }
+
+            .danger-reading-value {
+                font-size: 1.75rem;
+            }
+
+            .danger-persistent-badge {
+                bottom: 0.5rem;
+                right: 0.5rem;
+                left: 0.5rem;
+                justify-content: center;
             }
         }
         
@@ -1325,7 +1480,9 @@
             .dashboard-header,
             .offline-banner,
             .retry-btn,
-            .skip-link {
+            .skip-link,
+            .danger-alert-modal,
+            .danger-persistent-badge {
                 display: none !important;
             }
             
@@ -1370,30 +1527,29 @@
             }
         }
         
-       @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
 
-/* FIX FOR MORNING/EVENING EXPANSION */
-.comparison-view .comparison-section {
-    min-width: 0;
-    overflow: hidden;
-}
+        .comparison-view .comparison-section {
+            min-width: 0;
+            overflow: hidden;
+        }
 
-.comparison-view table {
-    min-width: unset !important;
-    width: 100%;
-}
+        .comparison-view table {
+            min-width: unset !important;
+            width: 100%;
+        }
 
-.table-container {
-    min-width: 0;
-}
+        .table-container {
+            min-width: 0;
+        }
     </style>
 </head>
 <body>
@@ -1401,6 +1557,32 @@
     
     <div class="offline-banner" id="offlineBanner" role="alert" aria-live="assertive">
         <i class="fas fa-wifi"></i> You are currently offline. Data may not be up to date.
+    </div>
+
+    <!-- Professional danger alert modal -->
+    <div class="danger-alert-modal" id="dangerAlertModal" role="alertdialog" aria-labelledby="dangerAlertTitle" aria-describedby="dangerAlertDesc">
+        <div class="danger-alert-content">
+            <div class="danger-alert-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 id="dangerAlertTitle">Critical Blood Pressure Alert</h2>
+            <div class="danger-reading" id="dangerReadingDisplay">
+                <div class="danger-reading-value">--/--</div>
+                <div class="danger-reading-time">--</div>
+            </div>
+            <div class="danger-alert-message">
+                <p>Reach out to your caretaker or doctor</p>
+            </div>
+            <button class="danger-btn-dismiss" id="dismissDangerAlert" type="button">
+                I Understand
+            </button>
+        </div>
+    </div>
+
+    <!-- Persistent danger badge -->
+    <div class="danger-persistent-badge" id="dangerPersistentBadge">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Critical Alert Active</span>
     </div>
     
     <header class="dashboard-header" role="banner">
@@ -1426,7 +1608,7 @@
             <div style="text-align: center; padding: 0.75rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); margin: 1rem 0;">
                 <small style="color: var(--text-secondary);">
                     <i class="fas fa-info-circle" aria-hidden="true"></i>
-                    Blood pressure categories based on <a href="https://www.who.int/news-room/fact-sheets/detail/hypertension" target="_blank" rel="noopener noreferrer">World Health Organization (WHO) guidelines</a> and <a href="https://apps.who.int/iris/bitstream/handle/10665/79059/WHO_DCO_WHD_2013.2_eng.pdf" target="_blank" rel="noopener noreferrer">WHO Technical Report</a> as adopted by Ghana Health Service
+                    Blood pressure categories based on <a href="https://www.who.int/news-room/fact-sheets/detail/hypertension" target="_blank" rel="noopener noreferrer">World Health Organization (WHO) guidelines</a>
                 </small>
             </div>
         </div>
@@ -1503,7 +1685,8 @@
                     </div>
                 </section>
             </aside>
-<main class="main-content" id="main-content" role="main">
+
+            <main class="main-content" id="main-content" role="main">
                 <div class="hero-header">
                     <div class="refresh-time" id="lastRefresh" aria-live="polite">Last updated: --</div>
                     
@@ -1564,7 +1747,6 @@
                                         <span class="toggle-slider"></span>
                                         <span class="toggle-label">Show BP Categories</span>
                                     </label>
-                                    
                                 </div>
                             </div>
                             <i class="fas fa-weight stat-icon" aria-hidden="true"></i>
@@ -1637,10 +1819,6 @@
                             <h4><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Consistency Alert</h4>
                             <p>Consider taking readings at the same time each day for more accurate trends.</p>
                         </article>
-                        <article class="insight-item insight-alert">
-                            <h4><i class="fas fa-bell" aria-hidden="true"></i> Morning vs Evening</h4>
-                            <p>Your evening readings tend to be 5-10 mmHg higher than morning readings.</p>
-                        </article>
                     </div>
                 </section>
                 
@@ -1650,7 +1828,8 @@
             </main>
         </div>
     </div>
-<script>
+
+    <script>
         // Configuration
         const CONFIG = {
             SHEET_ID: '1CuERI5x-BYp6k-JG9yUHymi6QnxH96op6iTAdIBs4zs',
@@ -1668,18 +1847,30 @@
         let showCategories = false;
         let retryCount = 0;
         let isOnline = navigator.onLine;
+        
+        let dangerousReadings = [];
+        let dismissedReadings = new Set(); // Track dismissed readings by timestamp
+        let isDangerAlertDismissed = false;
+        let dangerCheckInterval = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
         });
 
         function initializeApp() {
+            // Load dismissed readings from localStorage
+            const savedDismissed = localStorage.getItem('dismissedReadings');
+            if (savedDismissed) {
+                dismissedReadings = new Set(JSON.parse(savedDismissed));
+            }
+            
             loadReadings();
             setupEventListeners();
             updateLastRefreshTime();
             setupThemeToggle();
             setupOfflineDetection();
             setupAccessibility();
+            setupDangerAlertSystem();
         }
 
         function setupOfflineDetection() {
@@ -1704,7 +1895,10 @@
         function setupAccessibility() {
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    // Handle escape key for closing dialogs
+                    const dangerModal = document.getElementById('dangerAlertModal');
+                    if (dangerModal.classList.contains('show')) {
+                        dismissDangerAlert();
+                    }
                 }
             });
             
@@ -1712,6 +1906,129 @@
             if (mainContent) {
                 mainContent.setAttribute('tabindex', '-1');
             }
+        }
+
+        function setupDangerAlertSystem() {
+            const dismissBtn = document.getElementById('dismissDangerAlert');
+            const persistentBadge = document.getElementById('dangerPersistentBadge');
+            
+            dismissBtn.addEventListener('click', dismissDangerAlert);
+            persistentBadge.addEventListener('click', showDangerAlert);
+            
+            // Check for dangerous readings every 2 seconds
+            dangerCheckInterval = setInterval(checkForDangerousReadings, 2000);
+        }
+
+        function dismissDangerAlert() {
+            const modal = document.getElementById('dangerAlertModal');
+            const badge = document.getElementById('dangerPersistentBadge');
+            
+            // Add current dangerous reading to dismissed set
+            if (dangerousReadings.length > 0) {
+                const readingId = dangerousReadings[0].timestamp;
+                dismissedReadings.add(readingId);
+                localStorage.setItem('dismissedReadings', JSON.stringify([...dismissedReadings]));
+            }
+            
+            modal.classList.remove('show');
+            badge.classList.add('show');
+            isDangerAlertDismissed = true;
+        }
+
+        function showDangerAlert() {
+            if (dangerousReadings.length > 0) {
+                const modal = document.getElementById('dangerAlertModal');
+                const badge = document.getElementById('dangerPersistentBadge');
+                
+                modal.classList.add('show');
+                badge.classList.remove('show');
+                isDangerAlertDismissed = false;
+                
+                displayDangerAlert(dangerousReadings[0]);
+            }
+        }
+
+        function checkForDangerousReadings() {
+            if (allReadings.length === 0) return;
+            
+            dangerousReadings = [];
+            
+            // Check each reading for dangerous conditions (excluding Wide Pulse Pressure and Isolated Systolic Hypertension)
+            allReadings.forEach(reading => {
+                // Skip if this reading has been dismissed
+                if (dismissedReadings.has(reading.timestamp)) {
+                    return;
+                }
+                
+                const sys = parseInt(reading.systolic);
+                const dia = parseInt(reading.diastolic);
+                
+                let dangerType = null;
+                let dangerMessage = '';
+                
+                // Hypertensive Crisis (180/120 or higher)
+                if (sys >= 180 || dia >= 120) {
+                    dangerType = 'HYPERTENSIVE CRISIS';
+                }
+                // Severe Hypertension (170/110 or higher)
+                else if (sys >= 170 || dia >= 110) {
+                    dangerType = 'SEVERE HYPERTENSION';
+                }
+                // Critically Low Diastolic
+                else if (dia < 50) {
+                    dangerType = 'CRITICALLY LOW DIASTOLIC';
+                }
+                // Severe Hypotension
+                else if (sys < 90 && dia < 60) {
+                    dangerType = 'SEVERE HYPOTENSION';
+                }
+                
+                if (dangerType) {
+                    dangerousReadings.push({
+                        reading: reading,
+                        type: dangerType,
+                        systolic: sys,
+                        diastolic: dia,
+                        timestamp: reading.timestamp
+                    });
+                }
+            });
+            
+            // Filter out already dismissed readings
+            dangerousReadings = dangerousReadings.filter(danger => !dismissedReadings.has(danger.timestamp));
+            
+            // If there are dangerous readings and alert hasn't been dismissed, show it
+            if (dangerousReadings.length > 0 && !isDangerAlertDismissed) {
+                displayDangerAlert(dangerousReadings[0]);
+            } else if (dangerousReadings.length === 0) {
+                // No more dangerous readings, hide everything
+                const modal = document.getElementById('dangerAlertModal');
+                const badge = document.getElementById('dangerPersistentBadge');
+                modal.classList.remove('show');
+                badge.classList.remove('show');
+                isDangerAlertDismissed = false;
+            }
+        }
+
+        function displayDangerAlert(dangerData) {
+            const modal = document.getElementById('dangerAlertModal');
+            const readingDisplay = document.getElementById('dangerReadingDisplay');
+            
+            const dateObj = new Date(dangerData.timestamp);
+            const dateStr = dateObj.toLocaleString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            readingDisplay.innerHTML = `
+                <div class="danger-reading-value">${dangerData.systolic}/${dangerData.diastolic}</div>
+                <div class="danger-reading-time">${dateStr}</div>
+            `;
+            
+            modal.classList.add('show');
         }
 
         function setupThemeToggle() {
@@ -2281,7 +2598,7 @@
                                 </div>
                             </div>
                             <div style="max-height: 200px; overflow-y: auto;">
-<table style="font-size: 0.7rem;">
+                                <table style="font-size: 0.7rem;">
                                     <thead>
                                         <tr><th>Date</th><th>Time</th><th>BP</th></tr>
                                     </thead>
@@ -2457,6 +2774,23 @@
             }
             
             let insightsHTML = '';
+
+            // Check for dangerous readings first
+            const recentDangerous = dangerousReadings.filter(d => {
+                const readingDate = new Date(d.timestamp);
+                const now = new Date();
+                const daysDiff = (now - readingDate) / (1000 * 60 * 60 * 24);
+                return daysDiff <= 7; // Last 7 days
+            });
+            
+            if (recentDangerous.length > 0) {
+                insightsHTML += `
+                    <div class="insight-item insight-alert">
+                        <h4><i class="fas fa-exclamation-circle"></i> Critical Readings Detected</h4>
+                        <p>You have ${recentDangerous.length} critical blood pressure reading${recentDangerous.length > 1 ? 's' : ''} in the last 7 days. Please reach out to your caretaker or doctor.</p>
+                    </div>
+                `;
+            }
 
             const morningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'morning');
             const eveningReadings = filteredReadings.filter(r => getTimeOfDay(r.timestamp) === 'evening');
