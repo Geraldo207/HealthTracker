@@ -1215,6 +1215,118 @@
             border-top: 1px solid var(--border-color);
         }
 
+.sugar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.sugar-header h2 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sugar-header h2 i {
+    background: var(--gradient-bg);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.sugar-date-controls {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.sugar-preset-btn {
+    padding: 0.5rem 1rem;
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.sugar-preset-btn:hover, .sugar-preset-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.sugar-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.sugar-stat {
+    background: var(--light-bg);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.sugar-stat-label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+}
+
+.sugar-stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.sugar-stat-unit {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.sugar-timestamp {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.sugar-category {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.75rem;
+}
+
+.sugar-normal { background: #dcfce7; color: var(--success-color); }
+.sugar-high { background: #fef3c7; color: var(--warning-color); }
+.sugar-critical { background: #fee2e2; color: var(--danger-color); }
+
+@media (max-width: 768px) {
+    .sugar-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .sugar-date-controls {
+        flex-direction: column;
+    }
+}
         /* ===== RESPONSIVE DESIGN ===== */
         
         @media (max-width: 480px) {
@@ -1267,6 +1379,15 @@
             .stat-icon {
                 font-size: 2rem;
             }
+            .sugar-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    margin-top: 1.5rem;
+}
+
             
             .table-controls {
                 flex-direction: column;
@@ -1754,6 +1875,38 @@
                     </article>
                 </section>
 
+                <section class="sugar-card" aria-labelledby="sugarCardTitle">
+                    <div class="sugar-header">
+                        <h2 id="sugarCardTitle">
+                            <i class="fas fa-droplet" aria-hidden="true"></i>
+                            Blood Sugar Readings
+                        </h2>
+                        <div class="sugar-date-controls">
+                            <button class="sugar-preset-btn active" data-sugar-preset="all" type="button">All Time</button>
+                            <button class="sugar-preset-btn" data-sugar-preset="month" type="button">This Month</button>
+                            <button class="sugar-preset-btn" data-sugar-preset="week" type="button">This Week</button>
+                        </div>
+                    </div>
+                    
+                    <div class="sugar-content">
+                        <div class="sugar-stat">
+                            <div class="sugar-stat-label">Latest Reading</div>
+                            <div class="sugar-stat-value" id="latestSugar" aria-live="polite">--</div>
+                            <div class="sugar-stat-unit">mg/dL</div>
+                            <div id="latestSugarCategory" aria-live="polite"></div>
+                            <div class="sugar-timestamp" id="latestSugarTime">--</div>
+                        </div>
+                        
+                        <div class="sugar-stat">
+                            <div class="sugar-stat-label">Average Reading</div>
+                            <div class="sugar-stat-value" id="averageSugar" aria-live="polite">--</div>
+                            <div class="sugar-stat-unit">mg/dL</div>
+                            <div id="averageSugarCategory" aria-live="polite"></div>
+                            <div class="sugar-timestamp" id="sugarPeriod">--</div>
+                        </div>
+                    </div>
+                </section>
+
                 <section class="readings-table" aria-labelledby="readingsTableTitle">
                     <div class="table-header">
                         <h2 id="readingsTableTitle">
@@ -1826,8 +1979,6 @@
                     <p>HealthTracker Pro Dashboard • Last updated: <span id="footerDate">--</span></p>
                 </footer>
             </main>
-        </div>
-    </div>
 
     <script>
         // Configuration
@@ -1852,6 +2003,103 @@
         let dismissedReadings = new Set(); // Track dismissed readings by timestamp
         let isDangerAlertDismissed = false;
         let dangerCheckInterval = null;
+        let sugarReadings = [];
+let filteredSugarReadings = [];
+let currentSugarDateRange = 'all';
+
+function getSugarCategory(reading) {
+    const value = parseInt(reading);
+    if (value < 70) return { name: 'Low', class: 'sugar-critical' };
+    if (value < 100) return { name: 'Normal', class: 'sugar-normal' };
+    if (value < 140) return { name: 'High-Normal', class: 'sugar-high' };
+    if (value < 200) return { name: 'High', class: 'sugar-high' };
+    return { name: 'Critical', class: 'sugar-critical' };
+}
+
+function extractSugarReadings(data) {
+    return data.filter(item => item.sugar || item.glucose).map(item => ({
+        timestamp: item.timestamp,
+        value: item.sugar || item.glucose,
+        notes: item.notes || ''
+    })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+}
+
+function updateSugarStats() {
+    if (filteredSugarReadings.length === 0) {
+        document.getElementById('latestSugar').textContent = '--';
+        document.getElementById('averageSugar').textContent = '--';
+        document.getElementById('latestSugarCategory').innerHTML = '';
+        document.getElementById('averageSugarCategory').innerHTML = '';
+        document.getElementById('latestSugarTime').textContent = '--';
+        document.getElementById('sugarPeriod').textContent = '--';
+        return;
+    }
+
+    const latest = filteredSugarReadings[0];
+    const average = Math.round(
+        filteredSugarReadings.reduce((sum, r) => sum + parseInt(r.value), 0) / filteredSugarReadings.length
+    );
+
+    const latestCategory = getSugarCategory(latest.value);
+    const averageCategory = getSugarCategory(average);
+
+    document.getElementById('latestSugar').textContent = latest.value;
+    document.getElementById('averageSugar').textContent = average;
+    
+    document.getElementById('latestSugarCategory').innerHTML = 
+        `<div class="sugar-category ${latestCategory.class}">${latestCategory.name}</div>`;
+    document.getElementById('averageSugarCategory').innerHTML = 
+        `<div class="sugar-category ${averageCategory.class}">${averageCategory.name}</div>`;
+
+    const latestDate = new Date(latest.timestamp);
+    document.getElementById('latestSugarTime').textContent = 
+        `${latestDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} on ${latestDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+    const periodStart = filteredSugarReadings[filteredSugarReadings.length - 1].timestamp;
+    const periodEnd = latest.timestamp;
+    document.getElementById('sugarPeriod').textContent = 
+        `${filteredSugarReadings.length} readings`;
+}
+
+function applysugarFilters() {
+    let tempFiltered = [...sugarReadings];
+
+    if (currentSugarDateRange !== 'all') {
+        const today = new Date();
+        let startDate;
+
+        switch(currentSugarDateRange) {
+            case 'week':
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7);
+                startDate.setHours(0, 0, 0, 0);
+                break;
+            case 'month':
+                startDate = new Date(today);
+                startDate.setMonth(today.getMonth() - 1);
+                startDate.setHours(0, 0, 0, 0);
+                break;
+        }
+
+        if (startDate) {
+            tempFiltered = tempFiltered.filter(r => new Date(r.timestamp) >= startDate);
+        }
+    }
+
+    filteredSugarReadings = tempFiltered;
+    updateSugarStats();
+}
+
+function setupSugarEventListeners() {
+    document.querySelectorAll('.sugar-preset-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.sugar-preset-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentSugarDateRange = this.dataset.sugarPreset;
+            applysugarFilters();
+        });
+    });
+}
 
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
@@ -1864,13 +2112,19 @@
                 dismissedReadings = new Set(JSON.parse(savedDismissed));
             }
             
-            loadReadings();
+          
+            setupSugarEventListeners();
+            applysugarFilters();
             setupEventListeners();
             updateLastRefreshTime();
             setupThemeToggle();
             setupOfflineDetection();
             setupAccessibility();
             setupDangerAlertSystem();
+
+            
+             applysugarFilters();
+             loadReadings();
         }
 
         function setupOfflineDetection() {
@@ -2220,9 +2474,10 @@
 
                 if (!result.success) throw new Error(result.error || 'Unknown error from Apps Script');
 
-                allReadings = result.data || [];
-                allReadings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                console.log('Processed readings:', allReadings);
+             allReadings = result.data || [];
+sugarReadings = extractSugarReadings(result.data || []);
+allReadings.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+console.log('Processed readings:', allReadings);
 
                 initializeDateSelectors();
                 applyAllFilters();
@@ -2430,10 +2685,10 @@
             const tableHTML = `
                 <table>
                     <thead>
-                        <tr>
-                            <th>Date</th><th>Time</th><th>Blood Pressure</th>${showCategories ? '<th>Category</th>' : ''}<th>Weight</th><th>Recorded By</th><th>Notes</th>
-                        </tr>
-                    </thead>
+    <tr>
+        <th>Date</th><th>Time</th><th>Blood Pressure</th>${showCategories ? '<th>Category</th>' : ''}<th>Weight</th><th>Blood Sugar</th><th>Recorded By</th><th>Notes</th>
+    </tr>
+</thead>
                     <tbody>
                         ${filteredReadings.slice(0, 30).map(reading => {
                             const category = getBPCategory(parseInt(reading.systolic), parseInt(reading.diastolic));
@@ -2450,9 +2705,10 @@
                                 </td>
                                 <td><span class="bp-reading bp-${category.class}">${reading.systolic}/${reading.diastolic}</span></td>
                                 ${showCategories ? `<td><span class="stat-category ${category.class}">${category.name}</span></td>` : ''}
-                                <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
-                                <td>${reading.recordedBy || 'Unknown'}</td>
-                                <td>${reading.notes || ''}</td>
+                              <td>${reading.weight ? reading.weight+' lbs':'—'}</td>
+                              <td>${reading.sugar ? reading.sugar + ' mg/dL' : '—'}</td>
+                              <td>${reading.recordedBy || 'Unknown'}</td>
+                              <td>${reading.notes || ''}</td>
                             </tr>`;
                         }).join('')}
                     </tbody>
